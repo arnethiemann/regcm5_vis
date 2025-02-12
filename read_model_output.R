@@ -1,5 +1,5 @@
 library(ncdf4)
-library(CFtime)
+#library(CFtime)
 library(tidyverse)
 library(terra)
 
@@ -15,7 +15,7 @@ precip_arr <- ncvar_get(nc_data, "pr") # in"kg m-2 s-1" = mm/second
 
 fill_value <- ncatt_get(nc_data, "pr", "_FillValue")
 
-nc_close(nc_data)
+nc_close(nc_data); rm(nc_data)
 
 # if prevalent, replace NA value by actual NAs
 if (fill_value$hasatt) {
@@ -64,3 +64,4 @@ rain_ramp(10)
 
 # test plot
 plot(precip_arr_ras[[40:48]], col = rain_ramp(10))
+

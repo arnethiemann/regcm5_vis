@@ -1,7 +1,7 @@
 # regcm5_vis
 Visualizations for RegCM5 model outputs
 
-## `read_nc.R`
+## `read_model_output.R`
 Reads the model output. This works only with the `ncdf4` package and not using `terra` alone, as the output file doesn't follow the netcdf conventions. The script also transposes and horizontally flips the output.
 
 ## `model_validation.R`
