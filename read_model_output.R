@@ -3,7 +3,7 @@ library(ncdf4)
 library(terra)
 
 # function for extracting a netcdf variable into a raster stack
-ncdfVar2raster <- function(file, variable, prefix = "regcm5_"){
+ncdfVar2raster <- function(file, variable, proj4_string, prefix = "regcm5_"){
   # open
   nc_data <- nc_open(file, write = F)
   
@@ -43,7 +43,7 @@ ncdfVar2raster <- function(file, variable, prefix = "regcm5_"){
   
   
   # add crs to raster
-  terra::crs(var_arr_ras) <- "+proj=lcc +lon_0=-54 +lat_1=22 +lat_2=26"
+  terra::crs(var_arr_ras) <- proj4_string
   
   # calculate raster extent
   dLat <- abs(lat[2] - lat[1]) / 2
@@ -59,8 +59,9 @@ ncdfVar2raster <- function(file, variable, prefix = "regcm5_"){
   
   # add time to rasters
   nc_time <- as.POSIXct(nc_time * 3600, origin = "1949-12-01", tz = "UTC")
+  time(var_arr_ras) <- nc_time
   
-  names(var_arr_ras) <- paste("Date:", strftime(nc_time, format = "%Y-%m-%d %H:%M"))
+  names(var_arr_ras) <- paste("Var", variable, "on", strftime(nc_time, format = "%Y-%m-%d %H:%M"))
 
   # assign raster stack to global environment
   assign(
@@ -89,5 +90,9 @@ mapply(
     "psl",         # sea-level pressure
     "huss",        # near-surface specific humidity
     "hurs"         # near-surface relative humidity
-  )
+  ),
+  proj4_string = "+proj=aea +lat_0=24 +lon_0=54 +lat_1=22 +lat_2=26 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs"
 )
+
+# tidy up
+rm(ncdfVar2raster)
